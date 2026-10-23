@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Shop All Groceries | Meenachi Grocery</title>
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/responsive.css">
+</head>
+<body>
+  <!-- Header -->
+  <header class="site-header">
+    <div class="container">
+      <div class="header-main">
+        <a href="../index.html" class="brand-logo">
+          <svg class="brand-icon-svg" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect width="48" height="48" rx="12" fill="#19583B"/>
+            <path d="M13 18C13 16.8954 13.8954 16 15 16H33C34.1046 16 35 16.8954 35 18L36.8 34.2C36.9189 35.2701 36.0754 36.2 35 36.2H13C11.9246 36.2 11.0811 35.2701 11.2 34.2L13 18Z" fill="#FFFFFF"/>
+            <path d="M19 16V13C19 10.2386 21.2386 8 24 8C26.7614 8 29 10.2386 29 13V16" stroke="#E99A38" stroke-width="3" stroke-linecap="round"/>
+            <path d="M24 20C24 13 32 10.5 35 10C34.5 14 31 20 24 20Z" fill="#E99A38"/>
+            <path d="M24 20C24 15 18 13.5 15 13C15.5 16.5 18.5 20 24 20Z" fill="#29B06A"/>
+          </svg>
+          <div class="brand-text-block">
+            <span class="brand-name">Meenachi</span>
+            <span class="brand-tagline">Freshness at Your Doorstep</span>
+          </div>
+        </a>
+
+        <div class="search-wrapper">
+          <div class="search-input-box">
+            <input type="search" id="headerSearchInput" class="search-input" placeholder="Search groceries...">
+            <button type="button" class="search-submit-btn">🔍</button>
+          </div>
+          <div id="searchResultsDropdown" class="search-dropdown hidden"></div>
+        </div>
+
+        <div class="header-actions">
+          <a href="../index.html" class="action-btn">🏠 Home</a>
+          <button type="button" class="action-btn cart-action-btn" onclick="openCartDrawer()">
+            <span>🛒</span>
+            <span class="cart-count-badge" style="display: none;">0</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="container" style="padding: 32px 20px;">
+    <div class="section-header">
+      <div>
+        <h1 class="section-title">All Grocery Catalogue</h1>
+        <p class="section-subtitle">Discover pure, authentic staples sourced directly from farms & traditional chekku mills</p>
+      </div>
+      <div>
+        <select id="sortSelect" class="variant-select" style="padding: 8px 16px; border-radius: var(--radius-full);" onchange="filterAndRenderProducts()">
+          <option value="featured">Featured & Recommended</option>
+          <option value="price-low">Price: Low to High</option>
+          <option value="price-high">Price: High to Low</option>
+          <option value="rating">Highest Customer Rating</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Category Filter Tabs -->
+    <div id="categoryTabs" style="display: flex; gap: 8px; overflow-x: auto; padding-bottom: 16px; margin-bottom: 24px;">
+      <button type="button" class="search-chip" style="background: var(--primary); color: white;" onclick="setCategoryFilter('all', this)">All Categories</button>
+      <button type="button" class="search-chip" onclick="setCategoryFilter('rice-grains', this)">🌾 Rice & Grains</button>
+      <button type="button" class="search-chip" onclick="setCategoryFilter('cooking-oil', this)">🫒 Cooking Oil</button>
+      <button type="button" class="search-chip" onclick="setCategoryFilter('dhal-pulses', this)">🥣 Dhal & Pulses</button>
+      <button type="button" class="search-chip" onclick="setCategoryFilter('spices-masala', this)">🌶️ Spices & Masala</button>
+      <button type="button" class="search-chip" onclick="setCategoryFilter('vegetables', this)">🥦 Vegetables</button>
+      <button type="button" class="search-chip" onclick="setCategoryFilter('dairy-eggs', this)">🥛 Dairy & Eggs</button>
+    </div>
+
+    <!-- Products Catalogue Grid -->
+    <div id="shopProductsGrid" class="products-grid"></div>
+    <div id="products" style="display:none;"></div>
+  </main>
+
+  <!-- Slide-in Cart Drawer -->
+  <div id="cartDrawerOverlay" class="cart-drawer-overlay" onclick="closeCartDrawer()"></div>
+  <aside id="cartDrawer" class="cart-drawer">
+    <div class="cart-drawer-header">
+      <h3 class="cart-drawer-title">Shopping Basket</h3>
+      <button type="button" class="close-drawer-btn" onclick="closeCartDrawer()">✕</button>
+    </div>
+    <div id="cartDrawerItemsContainer" class="cart-items-scrollable"></div>
+    <div class="cart-drawer-footer">
+      <div class="bill-line-row total">
+        <span>Total Payable:</span>
+        <span id="drawerFinalTotal">₹0</span>
+      </div>
+      <a href="checkout.html" class="drawer-checkout-btn">Proceed to Checkout ➔</a>
+    </div>
+  </aside>
+
+  <div id="toastContainer" class="toast-container"></div>
+
+  <!-- Supabase & Database Integration -->
+  <script type="module" src="../js/supabase.js"></script>
+  <script type="module" src="../js/fetchProducts.js"></script>
+  <script src="../js/dbService.js"></script>
+
+  <!-- Scripts -->
+  <script src="../js/translations.js"></script>
+  <script src="../js/products.js"></script>
+  <script src="../js/cart.js"></script>
+  <script src="../js/search.js"></script>
+  <script>
+    let activeCategory = "all";
+    let liveProducts = [];
+    const urlParams = new URLSearchParams(window.location.search);
+    const initialCategory = urlParams.get("category");
+    if (initialCategory) activeCategory = initialCategory;
+
+    document.addEventListener("DOMContentLoaded", async () => {
+      window.searchManager.init("#headerSearchInput", "#searchResultsDropdown");
+      if (window.dbService) {
+        liveProducts = await window.dbService.getProducts();
+      }
+      await filterAndRenderProducts();
+      updateBadges();
+    });
+
+    window.addEventListener("cartUpdated", () => {
+      updateBadges();
+      filterAndRenderProducts();
+      renderShopDrawer();
+    });
+
+    function setCategoryFilter(catId, btn) {
+      activeCategory = catId;
+      document.querySelectorAll("#categoryTabs button").forEach(b => {
+        b.style.background = "var(--bg-warm)";
+        b.style.color = "var(--text-secondary)";
+      });
+      btn.style.background = "var(--primary)";
+      btn.style.color = "white";
+      filterAndRenderProducts();
+    }
+
+    async function filterAndRenderProducts() {
+      if (!liveProducts || liveProducts.length === 0) {
+        if (window.dbService) {
+          liveProducts = await window.dbService.getProducts();
+        } else {
+          liveProducts = window.groceryCatalog?.products || [];
+        }
+      }
+
+      let items = activeCategory === "all" 
+        ? [...liveProducts] 
+        : liveProducts.filter(p => p.category === activeCategory);
+      const sortVal = document.getElementById("sortSelect").value;
+
+      if (sortVal === "price-low") items.sort((a, b) => a.price - b.price);
+      else if (sortVal === "price-high") items.sort((a, b) => b.price - a.price);
+      else if (sortVal === "rating") items.sort((a, b) => b.rating - a.rating);
+
+      const grid = document.getElementById("shopProductsGrid");
+      grid.innerHTML = items.map(product => {
+        const qty = window.cart.getItemQuantity(product.id, product.unit);
+        return `
+          <div class="product-card">
+            ${product.badge ? `<span class="product-badge">${product.badge}</span>` : ""}
+            <div class="product-image-container">
+              <img src="${product.image}" alt="${product.nameEn}" class="product-image" onerror="this.src='${window.groceryCatalog.FALLBACK_IMAGE}'">
+            </div>
+            <span class="product-brand">${product.brand}</span>
+            <h3 class="product-title">${product.nameEn}</h3>
+            <span class="variant-badge-single">${product.unit}</span>
+            <div class="product-footer-row">
+              <div class="product-pricing">
+                <span class="product-price-current">${window.groceryCatalog.formatINR(product.price)}</span>
+                <span class="product-mrp-strike">${window.groceryCatalog.formatINR(product.mrp)}</span>
+              </div>
+              ${qty > 0 ? `
+                <div class="product-qty-stepper">
+                  <button class="stepper-btn" onclick="window.cart.decrement('${product.id}_${product.unit}')">−</button>
+                  <span class="stepper-val">${qty}</span>
+                  <button class="stepper-btn" onclick="window.cart.increment('${product.id}_${product.unit}')">+</button>
+                </div>
+              ` : `
+                <button class="add-to-cart-btn" onclick="window.cart.addItem(window.groceryCatalog.getProductById('${product.id}'))">+ Add</button>
+              `}
+            </div>
+          </div>
+        `;
+      }).join("");
+    }
+
+    function updateBadges() {
+      const summary = window.cart.getSummary();
+      document.querySelectorAll(".cart-count-badge").forEach(b => {
+        b.textContent = summary.itemCount;
+        b.style.display = summary.itemCount > 0 ? "flex" : "none";
+      });
+    }
+
+    function openCartDrawer() {
+      document.getElementById("cartDrawer").classList.add("active");
+      document.getElementById("cartDrawerOverlay").classList.add("active");
+      renderShopDrawer();
+    }
+
+    function closeCartDrawer() {
+      document.getElementById("cartDrawer").classList.remove("active");
+      document.getElementById("cartDrawerOverlay").classList.remove("active");
+    }
+
+    function renderShopDrawer() {
+      const container = document.getElementById("cartDrawerItemsContainer");
+      const summary = window.cart.getSummary();
+      document.getElementById("drawerFinalTotal").textContent = window.groceryCatalog.formatINR(summary.finalTotal);
+
+      if (summary.itemCount === 0) {
+        container.innerHTML = `<div style="text-align: center; padding: 40px 20px;">Your cart is empty!</div>`;
+        return;
+      }
+
+      container.innerHTML = window.cart.items.map(item => `
+        <div class="cart-drawer-item">
+          <img src="${item.image}" class="drawer-item-img" onerror="this.src='${window.groceryCatalog.FALLBACK_IMAGE}'">
+          <div class="drawer-item-details">
+            <span class="drawer-item-name">${item.nameEn}</span>
+            <span class="drawer-item-unit">${item.unit}</span>
+            <span class="drawer-item-price">${window.groceryCatalog.formatINR(item.price)}</span>
+          </div>
+          <div class="drawer-qty-controls">
+            <button class="drawer-qty-btn" onclick="window.cart.decrement('${item.key}')">−</button>
+            <span class="drawer-qty-num">${item.quantity}</span>
+            <button class="drawer-qty-btn" onclick="window.cart.increment('${item.key}')">+</button>
+          </div>
+        </div>
+      `).join("");
+    }
+
+    window.showToastNotification = function(msg) {
+      const container = document.getElementById("toastContainer");
+      const t = document.createElement("div");
+      t.className = "toast";
+      t.innerHTML = `<span>🌿</span><span>${msg}</span>`;
+      container.appendChild(t);
+      setTimeout(() => t.remove(), 2500);
+    };
+  </script>
+</body>
+</html>

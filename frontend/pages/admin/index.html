@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Operations Portal | Meenachi Grocery</title>
+  <link rel="stylesheet" href="../../css/style.css">
+  <link rel="stylesheet" href="../../css/responsive.css">
+  <style>
+    .admin-layout {
+      display: grid;
+      grid-template-columns: 240px 1fr;
+      min-height: 100vh;
+    }
+    @media (max-width: 900px) {
+      .admin-layout { grid-template-columns: 1fr; }
+    }
+    .admin-sidebar {
+      background: #14281E;
+      color: #FFFFFF;
+      padding: 24px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .admin-nav-item {
+      padding: 10px 14px;
+      border-radius: var(--radius-md);
+      font-weight: 600;
+      font-size: 0.88rem;
+      color: rgba(255, 255, 255, 0.75);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .admin-nav-item.active, .admin-nav-item:hover {
+      background: rgba(255, 255, 255, 0.12);
+      color: #FFFFFF;
+    }
+    .admin-content {
+      padding: 32px;
+      background: var(--bg-warm);
+    }
+    .metric-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      margin-bottom: 28px;
+    }
+    .metric-card {
+      background: #FFFFFF;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 20px;
+      box-shadow: var(--shadow-xs);
+    }
+    .metric-val {
+      font-size: 1.8rem;
+      font-weight: 800;
+      color: var(--primary);
+      margin: 4px 0;
+    }
+    .admin-table {
+      width: 100%;
+      border-collapse: collapse;
+      background: #FFFFFF;
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      box-shadow: var(--shadow-xs);
+    }
+    .admin-table th, .admin-table td {
+      padding: 12px 16px;
+      text-align: left;
+      font-size: 0.85rem;
+      border-bottom: 1px solid var(--border-light);
+    }
+    .admin-table th {
+      background: var(--primary-light);
+      color: var(--primary);
+      font-weight: 700;
+    }
+    .status-badge-admin {
+      padding: 3px 8px;
+      border-radius: var(--radius-full);
+      font-size: 0.75rem;
+      font-weight: 700;
+    }
+    .badge-pending { background: #FFF3CD; color: #856404; }
+    .badge-confirmed { background: #D1ECF1; color: #0C5460; }
+    .badge-dispatched { background: #E2E3E5; color: #383D41; }
+    .badge-delivered { background: #D4EDDA; color: #155724; }
+  </style>
+</head>
+<body>
+  <div class="admin-layout">
+    <aside class="admin-sidebar">
+      <div style="font-family: 'Outfit'; font-size: 1.3rem; font-weight: 800; color: #FFFFFF; margin-bottom: 20px;">
+        🌿 Meenachi <span style="color: var(--accent);">Admin</span>
+      </div>
+      <div class="admin-nav-item active">📊 Dashboard & Sales</div>
+      <div class="admin-nav-item">📦 Inventory & Products</div>
+      <div class="admin-nav-item">🚚 Order Fulfillment</div>
+      <div class="admin-nav-item">🎟️ Coupons & Offers</div>
+      <div class="admin-nav-item">📍 Delivery PIN Zones</div>
+      <div style="margin-top: auto; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.1);">
+        <a href="../../index.html" style="color: rgba(255,255,255,0.6); font-size: 0.82rem;">← Back to Store</a>
+      </div>
+    </aside>
+
+    <main class="admin-content">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; flex-wrap: wrap; gap: 12px;">
+        <div>
+          <h1 style="font-size: 1.8rem; font-weight: 800; color: var(--text-main);">Store Overview & Fulfillment</h1>
+          <p style="font-size: 0.88rem; color: var(--text-secondary);">Real-time monitoring across Chennai, Madurai, and Coimbatore hubs</p>
+        </div>
+        <button type="button" class="btn-primary" onclick="exportOrdersCSV()">📥 Export Orders CSV</button>
+      </div>
+
+      <!-- KPI Metrics -->
+      <div class="metric-grid">
+        <div class="metric-card">
+          <div style="font-size: 0.8rem; color: var(--text-muted); font-weight: 700;">TODAY'S ORDERS</div>
+          <div class="metric-val" id="kpiOrderCount">142</div>
+          <div style="font-size: 0.75rem; color: #198754;">↑ 18% vs yesterday</div>
+        </div>
+        <div class="metric-card">
+          <div style="font-size: 0.8rem; color: var(--text-muted); font-weight: 700;">DAILY GROSS REVENUE</div>
+          <div class="metric-val">₹94,850</div>
+          <div style="font-size: 0.75rem; color: #198754;">↑ 12.4% vs last week</div>
+        </div>
+        <div class="metric-card">
+          <div style="font-size: 0.8rem; color: var(--text-muted); font-weight: 700;">PENDING PACKING</div>
+          <div class="metric-val" style="color: var(--accent);">8</div>
+          <div style="font-size: 0.75rem; color: var(--text-secondary);">Requires dispatch</div>
+        </div>
+        <div class="metric-card">
+          <div style="font-size: 0.8rem; color: var(--text-muted); font-weight: 700;">LOW STOCK ALERTS</div>
+          <div class="metric-val" style="color: #DC3545;">3 Items</div>
+          <div style="font-size: 0.75rem; color: #DC3545;">Vaagai Gingelly Oil (15 left)</div>
+        </div>
+      </div>
+
+      <!-- Live Orders Table -->
+      <div style="background: #FFFFFF; border-radius: var(--radius-lg); border: 1px solid var(--border-color); padding: 20px;">
+        <h2 style="font-size: 1.15rem; font-weight: 700; margin-bottom: 16px;">Live Customer Orders</h2>
+        <div style="overflow-x: auto;">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>Order ID</th>
+                <th>Customer</th>
+                <th>PIN / Hub</th>
+                <th>Slot</th>
+                <th>Amount</th>
+                <th>Status</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="adminOrdersTbody">
+              <tr>
+                <td><strong>#MG-842915</strong></td>
+                <td>Meenakshi Sundaram<br><small>+91 98765 11223</small></td>
+                <td>600040 (Anna Nagar)</td>
+                <td>2-Hour Express</td>
+                <td><strong>₹895</strong></td>
+                <td><span class="status-badge-admin badge-confirmed">Confirmed</span></td>
+                <td>
+                  <button class="search-chip" onclick="changeStatus(this, 'Packed')">Mark Packed</button>
+                </td>
+              </tr>
+              <tr>
+                <td><strong>#MG-842914</strong></td>
+                <td>Kavitha R.<br><small>+91 98401 55667</small></td>
+                <td>625001 (Madurai)</td>
+                <td>Morning Slot</td>
+                <td><strong>₹3,499</strong> (Family Pack)</td>
+                <td><span class="status-badge-admin badge-dispatched">Dispatched</span></td>
+                <td>
+                  <button class="search-chip" onclick="changeStatus(this, 'Delivered')">Mark Delivered</button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script type="module" src="../../js/supabaseClient.js"></script>
+  <script src="../../js/dbService.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", async () => {
+      await loadAdminOrders();
+    });
+
+    async function loadAdminOrders() {
+      const tbody = document.getElementById("adminOrdersTbody");
+      if (!tbody) return;
+
+      let orders = [];
+      if (window.dbService) {
+        orders = await window.dbService.getOrders();
+      } else {
+        orders = JSON.parse(localStorage.getItem("meenachi_orders") || "[]");
+      }
+
+      if (!orders || orders.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; padding: 24px;">No orders found.</td></tr>`;
+        return;
+      }
+
+      document.getElementById("kpiOrderCount").textContent = orders.length;
+
+      tbody.innerHTML = orders.map(ord => {
+        const badgeClass = ord.status === "Delivered" ? "badge-delivered" : (ord.status === "Dispatched" ? "badge-dispatched" : "badge-confirmed");
+        const nextAction = ord.status === "Confirmed" ? "Packed" : (ord.status === "Packed" ? "Dispatched" : (ord.status === "Dispatched" ? "Delivered" : "Done"));
+
+        return `
+          <tr data-order-id="${ord.orderId}">
+            <td><strong>#${ord.orderId}</strong><br><small>${ord.date}</small></td>
+            <td>${ord.customer?.name || "Customer"}<br><small>${ord.customer?.phone || ""}</small></td>
+            <td>${ord.customer?.pin || "600040"}</td>
+            <td>${ord.slot || "Express 2-hr"}</td>
+            <td><strong>₹${ord.total}</strong></td>
+            <td><span class="status-badge-admin ${badgeClass}">${ord.status}</span></td>
+            <td>
+              ${nextAction !== "Done" ? `
+                <button class="search-chip" onclick="changeStatus(this, '${ord.orderId}', '${nextAction}')">
+                  Mark ${nextAction}
+                </button>
+              ` : `
+                <span style="color: #198754; font-weight: 700; font-size: 0.8rem;">✓ Complete</span>
+              `}
+            </td>
+          </tr>
+        `;
+      }).join("");
+    }
+
+    async function changeStatus(btn, orderId, nextStatus) {
+      if (window.dbService) {
+        await window.dbService.updateOrderStatus(orderId, nextStatus);
+      }
+      const row = btn.closest("tr");
+      const badge = row.querySelector(".status-badge-admin");
+      badge.textContent = nextStatus;
+      badge.className = "status-badge-admin " + (nextStatus === "Delivered" ? "badge-delivered" : "badge-dispatched");
+      btn.textContent = "Done";
+      btn.disabled = true;
+    }
+
+    function exportOrdersCSV() {
+      const orders = JSON.parse(localStorage.getItem("meenachi_orders") || "[]");
+      let csv = "OrderID,Customer,PIN,Slot,Amount,Status\n";
+      orders.forEach(o => {
+        csv += `${o.orderId},"${o.customer?.name || ''}",${o.customer?.pin || ''},"${o.slot || ''}",${o.total},${o.status}\n`;
+      });
+      const blob = new Blob([csv], { type: "text/csv" });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "Meenachi_Orders_" + new Date().toISOString().slice(0, 10) + ".csv";
+      a.click();
+    }
+  </script>
+</body>
+</html>

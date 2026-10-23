@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Checkout | Meenachi Grocery</title>
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/responsive.css">
+  <style>
+    .checkout-layout {
+      display: grid;
+      grid-template-columns: 1.4fr 0.8fr;
+      gap: 32px;
+      margin-top: 24px;
+    }
+    @media (max-width: 900px) {
+      .checkout-layout { grid-template-columns: 1fr; }
+    }
+    .checkout-card {
+      background: #FFFFFF;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      margin-bottom: 20px;
+    }
+    .checkout-card-title {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+    @media (max-width: 600px) {
+      .form-grid { grid-template-columns: 1fr; }
+    }
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .form-label {
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+    .form-input {
+      padding: 10px 14px;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      font-size: 0.9rem;
+      outline: none;
+    }
+    .form-input:focus {
+      border-color: var(--primary);
+    }
+    .slot-pill-group {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 10px;
+      margin-top: 8px;
+    }
+    .slot-pill {
+      border: 1.5px solid var(--border-color);
+      padding: 10px;
+      border-radius: var(--radius-md);
+      text-align: center;
+      cursor: pointer;
+      font-size: 0.82rem;
+      font-weight: 600;
+      transition: all 0.2s ease;
+    }
+    .slot-pill.active {
+      border-color: var(--primary);
+      background: var(--primary-light);
+      color: var(--primary);
+    }
+    .payment-option-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px;
+      border: 1.5px solid var(--border-color);
+      border-radius: var(--radius-md);
+      margin-bottom: 10px;
+      cursor: pointer;
+    }
+    .payment-option-row.active {
+      border-color: var(--primary);
+      background: var(--primary-light);
+    }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="container">
+      <div class="header-main">
+        <a href="../index.html" class="brand-logo">
+          <svg class="brand-icon-svg" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect width="48" height="48" rx="12" fill="#19583B"/>
+            <path d="M13 18C13 16.8954 13.8954 16 15 16H33C34.1046 16 35 16.8954 35 18L36.8 34.2C36.9189 35.2701 36.0754 36.2 35 36.2H13C11.9246 36.2 11.0811 35.2701 11.2 34.2L13 18Z" fill="#FFFFFF"/>
+            <path d="M19 16V13C19 10.2386 21.2386 8 24 8C26.7614 8 29 10.2386 29 13V16" stroke="#E99A38" stroke-width="3" stroke-linecap="round"/>
+            <path d="M24 20C24 13 32 10.5 35 10C34.5 14 31 20 24 20Z" fill="#E99A38"/>
+            <path d="M24 20C24 15 18 13.5 15 13C15.5 16.5 18.5 20 24 20Z" fill="#29B06A"/>
+          </svg>
+          <div class="brand-text-block">
+            <span class="brand-name">Meenachi</span>
+            <span class="brand-tagline">Secure Checkout</span>
+          </div>
+        </a>
+        <a href="../index.html" class="action-btn">➔ Continue Shopping</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="container" style="padding: 32px 20px;">
+    <h1 class="section-title">Delivery & Payment Checkout</h1>
+    <p class="section-subtitle">Complete your order details with verified delivery slot and safe payment</p>
+
+    <div class="checkout-layout">
+      <!-- Checkout Form -->
+      <div>
+        <!-- Delivery Address Form -->
+        <div class="checkout-card">
+          <h2 class="checkout-card-title"><span>📍</span> 1. Delivery Address</h2>
+          <form id="checkoutForm" onsubmit="handlePlaceOrder(event)">
+            <div class="form-grid">
+              <div class="form-group">
+                <label class="form-label">Full Name *</label>
+                <input type="text" class="form-input" id="custName" placeholder="e.g. Meenakshi Sundaram" required>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Mobile Number *</label>
+                <input type="tel" class="form-input" id="custPhone" placeholder="10-digit mobile number" pattern="[6-9][0-9]{9}" required>
+              </div>
+              <div class="form-group">
+                <label class="form-label">PIN Code *</label>
+                <input type="text" class="form-input" id="custPin" placeholder="6-digit PIN code" maxlength="6" value="600040" required>
+              </div>
+              <div class="form-group">
+                <label class="form-label">City / District *</label>
+                <input type="text" class="form-input" id="custCity" value="Chennai" required>
+              </div>
+              <div class="form-group" style="grid-column: 1 / -1;">
+                <label class="form-label">House No., Flat, Apartment, Street *</label>
+                <input type="text" class="form-input" id="custStreet" placeholder="e.g. Flat 3B, Sri Meenakshi Nilayam, 4th Main Road" required>
+              </div>
+              <div class="form-group" style="grid-column: 1 / -1;">
+                <label class="form-label">Landmark / Delivery Instructions</label>
+                <input type="text" class="form-input" id="custLandmark" placeholder="Near Temple / Ring bell twice">
+              </div>
+            </div>
+          </form>
+        </div>
+
+        <!-- Delivery Slots -->
+        <div class="checkout-card">
+          <h2 class="checkout-card-title"><span>⚡</span> 2. Choose Delivery Slot</h2>
+          <p style="font-size: 0.85rem; color: var(--text-secondary);">Select the most convenient time for your fresh delivery:</p>
+          <div class="slot-pill-group">
+            <div class="slot-pill active" onclick="selectSlot(this, '2-Hour Express')">
+              <strong>⚡ 2-Hour Express</strong><br><small>Guaranteed Today</small>
+            </div>
+            <div class="slot-pill" onclick="selectSlot(this, 'Tomorrow Morning (7AM - 10AM)')">
+              <strong>Morning Slot</strong><br><small>7 AM - 10 AM</small>
+            </div>
+            <div class="slot-pill" onclick="selectSlot(this, 'Tomorrow Evening (5PM - 8PM)')">
+              <strong>Evening Slot</strong><br><small>5 PM - 8 PM</small>
+            </div>
+          </div>
+        </div>
+
+        <!-- Payment Method -->
+        <div class="checkout-card">
+          <h2 class="checkout-card-title"><span>💳</span> 3. Payment Method</h2>
+          <div class="payment-option-row active" onclick="selectPayment(this, 'ONLINE')">
+            <input type="radio" name="payment" checked>
+            <div>
+              <strong>Online Payment (Razorpay UPI, GPay, PhonePe, Cards)</strong>
+              <div style="font-size: 0.78rem; color: var(--text-secondary);">Zero transaction fee. 100% Secure encrypted gateway.</div>
+            </div>
+          </div>
+          <div class="payment-option-row" onclick="selectPayment(this, 'COD')">
+            <input type="radio" name="payment">
+            <div>
+              <strong>Cash on Delivery (COD) / Pay on Delivery UPI</strong>
+              <div style="font-size: 0.78rem; color: var(--text-secondary);">Pay cash or scan QR when delivery partner arrives at your door.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Order Summary Card -->
+      <div>
+        <div class="checkout-card" style="position: sticky; top: 90px;">
+          <h2 class="checkout-card-title"><span>🛒</span> Order Summary</h2>
+          <div id="checkoutItemsList" style="max-height: 260px; overflow-y: auto; margin-bottom: 16px;"></div>
+
+          <div class="bill-line-row">
+            <span>Subtotal:</span>
+            <span id="summarySubtotal">₹0</span>
+          </div>
+          <div class="bill-line-row">
+            <span>Delivery Fee:</span>
+            <span id="summaryDeliveryFee">FREE</span>
+          </div>
+          <div id="summaryCouponRow" class="bill-line-row" style="display: none; color: #198754; font-weight: 700;">
+            <span>Coupon Discount:</span>
+            <span id="summaryCouponVal">- ₹0</span>
+          </div>
+          <div class="bill-line-row total">
+            <span>Final Payable:</span>
+            <span id="summaryTotal" class="bill-total-amount">₹0</span>
+          </div>
+
+          <button type="submit" form="checkoutForm" class="btn-primary" style="width: 100%; justify-content: center; margin-top: 20px;">
+            Place Order & Pay ➔
+          </button>
+          <p style="font-size: 0.72rem; color: var(--text-muted); text-align: center; margin-top: 10px;">
+            🔒 By placing the order, you agree to Meenachi Grocery Terms & Delivery Policy.
+          </p>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <div id="toastContainer" class="toast-container"></div>
+
+  <script type="module" src="../js/supabaseClient.js"></script>
+  <script src="../js/dbService.js"></script>
+  <script src="../js/translations.js"></script>
+  <script src="../js/products.js"></script>
+  <script src="../js/cart.js"></script>
+  <script>
+    let selectedDeliverySlot = "2-Hour Express";
+    let selectedPaymentMethod = "ONLINE";
+
+    document.addEventListener("DOMContentLoaded", () => {
+      renderCheckoutSummary();
+    });
+
+    function selectSlot(el, slotName) {
+      document.querySelectorAll(".slot-pill").forEach(p => p.classList.remove("active"));
+      el.classList.add("active");
+      selectedDeliverySlot = slotName;
+    }
+
+    function selectPayment(el, method) {
+      document.querySelectorAll(".payment-option-row").forEach(p => p.classList.remove("active"));
+      el.classList.add("active");
+      el.querySelector("input").checked = true;
+      selectedPaymentMethod = method;
+    }
+
+    function renderCheckoutSummary() {
+      const summary = window.cart.getSummary();
+      const itemsList = document.getElementById("checkoutItemsList");
+      
+      if (summary.itemCount === 0) {
+        itemsList.innerHTML = `<p style="color: var(--text-muted); text-align: center; padding: 20px;">Your basket is empty. Please add items before checking out.</p>`;
+        return;
+      }
+
+      itemsList.innerHTML = window.cart.items.map(item => `
+        <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--border-light); font-size: 0.85rem;">
+          <div>
+            <strong>${item.nameEn}</strong><br>
+            <span style="color: var(--text-muted); font-size: 0.75rem;">${item.unit} × ${item.quantity}</span>
+          </div>
+          <span style="font-weight: 700;">${window.groceryCatalog.formatINR(item.price * item.quantity)}</span>
+        </div>
+      `).join("");
+
+      document.getElementById("summarySubtotal").textContent = window.groceryCatalog.formatINR(summary.subtotal);
+      document.getElementById("summaryDeliveryFee").textContent = summary.deliveryFee === 0 ? "FREE" : window.groceryCatalog.formatINR(summary.deliveryFee);
+      if (summary.couponDiscount > 0) {
+        document.getElementById("summaryCouponRow").style.display = "flex";
+        document.getElementById("summaryCouponVal").textContent = "- " + window.groceryCatalog.formatINR(summary.couponDiscount);
+      }
+      document.getElementById("summaryTotal").textContent = window.groceryCatalog.formatINR(summary.finalTotal);
+    }
+
+    async function handlePlaceOrder(e) {
+      e.preventDefault();
+      const summary = window.cart.getSummary();
+      if (summary.itemCount === 0) {
+        alert("Your cart is empty! Add products first.");
+        return;
+      }
+
+      const orderId = "MG-" + Math.floor(100000 + Math.random() * 900000);
+      const orderData = {
+        orderId,
+        date: new Date().toLocaleDateString("en-IN", { month: "short", day: "numeric", year: "numeric", hour: "2-digit", minute: "2-digit" }),
+        customer: {
+          name: document.getElementById("custName").value,
+          phone: document.getElementById("custPhone").value,
+          pin: document.getElementById("custPin").value,
+          address: document.getElementById("custStreet").value + ", " + document.getElementById("custCity").value
+        },
+        slot: selectedDeliverySlot,
+        payment: selectedPaymentMethod,
+        items: window.cart.items,
+        total: summary.finalTotal,
+        status: "Confirmed"
+      };
+
+      // Save order to Supabase PostgreSQL & LocalStorage
+      if (window.dbService) {
+        await window.dbService.createOrder(orderData);
+      }
+
+      // Clear cart
+      window.cart.clearCart();
+
+      // Show Order Confirmation
+      alert(`🎉 Order Placed Successfully!\n\nOrder ID: ${orderId}\nTotal: ₹${summary.finalTotal}\nSlot: ${selectedDeliverySlot}\nPayment: ${selectedPaymentMethod}\n\nYour order is recorded live in Supabase PostgreSQL!`);
+      window.location.href = "orders.html";
+    }
+  </script>
+</body>
+</html>

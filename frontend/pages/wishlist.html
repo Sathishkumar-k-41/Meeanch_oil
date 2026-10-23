@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Wishlist | Meenachi Grocery</title>
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/responsive.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="container">
+      <div class="header-main">
+        <a href="../index.html" class="brand-logo">
+          <svg class="brand-icon-svg" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect width="48" height="48" rx="12" fill="#19583B"/>
+            <path d="M13 18C13 16.8954 13.8954 16 15 16H33C34.1046 16 35 16.8954 35 18L36.8 34.2C36.9189 35.2701 36.0754 36.2 35 36.2H13C11.9246 36.2 11.0811 35.2701 11.2 34.2L13 18Z" fill="#FFFFFF"/>
+            <path d="M19 16V13C19 10.2386 21.2386 8 24 8C26.7614 8 29 10.2386 29 13V16" stroke="#E99A38" stroke-width="3" stroke-linecap="round"/>
+            <path d="M24 20C24 13 32 10.5 35 10C34.5 14 31 20 24 20Z" fill="#E99A38"/>
+            <path d="M24 20C24 15 18 13.5 15 13C15.5 16.5 18.5 20 24 20Z" fill="#29B06A"/>
+          </svg>
+          <div class="brand-text-block">
+            <span class="brand-name">Meenachi</span>
+            <span class="brand-tagline">My Saved Wishlist</span>
+          </div>
+        </a>
+        <a href="../index.html" class="action-btn">🏠 Home</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="container" style="padding: 32px 20px;">
+    <h1 class="section-title">My Wishlist Items</h1>
+    <p class="section-subtitle">Products you've saved to buy later or add directly to your current grocery order</p>
+    
+    <div id="wishlistGrid" class="products-grid" style="margin-top: 24px;"></div>
+  </main>
+
+  <div id="toastContainer" class="toast-container"></div>
+
+  <script src="../js/translations.js"></script>
+  <script src="../js/products.js"></script>
+  <script src="../js/cart.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", renderWishlist);
+
+    function renderWishlist() {
+      const container = document.getElementById("wishlistGrid");
+      const list = JSON.parse(localStorage.getItem("meenachi_wishlist") || "[]");
+
+      if (list.length === 0) {
+        container.innerHTML = `
+          <div style="grid-column: 1 / -1; text-align: center; padding: 60px 20px; background: white; border-radius: 16px; border: 1px solid var(--border-color);">
+            <div style="font-size: 3rem; margin-bottom: 12px;">🤍</div>
+            <h3>Your wishlist is currently empty</h3>
+            <p style="color: var(--text-secondary); margin-bottom: 20px;">Browse our authentic South Indian spices, grains, and oils to save your favorite groceries.</p>
+            <a href="shop.html" class="btn-primary">Browse Catalogue ➔</a>
+          </div>
+        `;
+        return;
+      }
+
+      const products = list.map(id => window.groceryCatalog.getProductById(id)).filter(Boolean);
+      container.innerHTML = products.map(p => `
+        <div class="product-card">
+          <div class="product-image-container">
+            <img src="${p.image}" alt="${p.nameEn}" class="product-image" onerror="this.src='${window.groceryCatalog.FALLBACK_IMAGE}'">
+          </div>
+          <span class="product-brand">${p.brand}</span>
+          <h3 class="product-title">${p.nameEn}</h3>
+          <span class="variant-badge-single">${p.unit}</span>
+          <div class="product-footer-row">
+            <div class="product-pricing">
+              <span class="product-price-current">${window.groceryCatalog.formatINR(p.price)}</span>
+            </div>
+            <button class="add-to-cart-btn" onclick="window.cart.addItem(window.groceryCatalog.getProductById('${p.id}')); showToast('${p.nameEn} added to cart');">
+              + Move to Cart
+            </button>
+          </div>
+        </div>
+      `).join("");
+    }
+
+    function showToast(msg) {
+      const c = document.getElementById("toastContainer");
+      const t = document.createElement("div");
+      t.className = "toast";
+      t.innerHTML = `<span>🌿</span><span>${msg}</span>`;
+      c.appendChild(t);
+      setTimeout(() => t.remove(), 2500);
+    }
+  </script>
+</body>
+</html>

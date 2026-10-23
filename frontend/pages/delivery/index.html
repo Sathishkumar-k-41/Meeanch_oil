@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Delivery Partner Portal | Meenachi Grocery</title>
+  <link rel="stylesheet" href="../../css/style.css">
+  <link rel="stylesheet" href="../../css/responsive.css">
+  <style>
+    .delivery-header {
+      background: #14281E;
+      color: #FFFFFF;
+      padding: 16px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .delivery-trip-card {
+      background: #FFFFFF;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: var(--shadow-xs);
+    }
+    .delivery-badge {
+      padding: 4px 10px;
+      border-radius: var(--radius-full);
+      font-size: 0.75rem;
+      font-weight: 700;
+    }
+    .delivery-assigned { background: #FFF3CD; color: #856404; }
+    .delivery-completed { background: #D4EDDA; color: #155724; }
+  </style>
+</head>
+<body style="background: var(--bg-warm);">
+  <header class="delivery-header">
+    <div style="font-family: 'Outfit'; font-weight: 800; font-size: 1.2rem;">
+      🚚 Meenachi <span style="color: var(--accent);">Rider Hub</span>
+    </div>
+    <div style="font-size: 0.85rem;">
+      Rider: <strong>Murugan S. (Chennai Central Zone)</strong>
+    </div>
+  </header>
+
+  <main class="container" style="padding: 24px 16px; max-width: 680px;">
+    <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 20px;">
+      <h1 style="font-size: 1.4rem; font-weight: 800;">Assigned Deliveries Today</h1>
+      <span style="font-size: 0.82rem; font-weight: 700; color: var(--primary);">2 Pending • 1 Delivered</span>
+    </div>
+
+    <!-- Active Delivery Task -->
+    <div class="delivery-trip-card" style="border-left: 5px solid var(--accent);">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+        <span style="font-size: 1.1rem; font-weight: 800; color: var(--primary);">Order #MG-842915</span>
+        <span class="delivery-badge delivery-assigned">⚡ 2-Hour Express</span>
+      </div>
+
+      <div style="font-size: 0.9rem; line-height: 1.5; margin-bottom: 14px;">
+        <strong>Customer:</strong> Meenakshi Sundaram<br>
+        <strong>Address:</strong> Flat 3B, Sri Meenakshi Nilayam, 4th Main Road, Anna Nagar West, Chennai - 600040<br>
+        <strong>Landmark:</strong> Near Ayyappan Temple (Ring bell twice)<br>
+        <strong>Payment:</strong> <span style="color: #198754; font-weight: 700;">₹895 (Paid Online via UPI)</span>
+      </div>
+
+      <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+        <a href="tel:+919876511223" class="btn-outline-white" style="color: var(--primary); border-color: var(--primary); padding: 8px 16px; font-size: 0.85rem;">
+          📞 Call Customer
+        </a>
+        <a href="https://maps.google.com" target="_blank" class="btn-outline-white" style="color: var(--primary); border-color: var(--primary); padding: 8px 16px; font-size: 0.85rem;">
+          📍 Navigate Map
+        </a>
+        <button type="button" class="btn-primary" style="padding: 8px 20px; font-size: 0.85rem; margin-left: auto;" onclick="markDelivered(this)">
+          ✓ Confirm Delivery
+        </button>
+      </div>
+    </div>
+
+    <!-- Second Delivery Task -->
+    <div class="delivery-trip-card">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+        <span style="font-size: 1.1rem; font-weight: 800; color: var(--primary);">Order #MG-842916</span>
+        <span class="delivery-badge delivery-assigned">Morning Slot</span>
+      </div>
+
+      <div style="font-size: 0.9rem; line-height: 1.5; margin-bottom: 14px;">
+        <strong>Customer:</strong> Balaji K.<br>
+        <strong>Address:</strong> 14/2, 2nd Avenue, Shanti Colony, Anna Nagar, Chennai - 600040<br>
+        <strong>Payment:</strong> <span style="color: #D94838; font-weight: 700;">₹1,240 (Cash on Delivery - Collect Exact Change)</span>
+      </div>
+
+      <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+        <a href="tel:+919840199887" class="btn-outline-white" style="color: var(--primary); border-color: var(--primary); padding: 8px 16px; font-size: 0.85rem;">
+          📞 Call Customer
+        </a>
+        <button type="button" class="btn-primary" style="padding: 8px 20px; font-size: 0.85rem; margin-left: auto;" onclick="markDelivered(this)">
+          ✓ Confirm Cash & Delivery
+        </button>
+      </div>
+    </div>
+
+    <div style="text-align: center; margin-top: 32px;">
+      <a href="../../index.html" style="font-size: 0.84rem; color: var(--text-muted);">← Return to Customer Store</a>
+    </div>
+  </main>
+
+  <script>
+    function markDelivered(btn) {
+      const otp = prompt("Enter 4-digit Customer Delivery OTP provided by customer:");
+      if (otp && otp.length === 4) {
+        alert("✅ Delivery Successfully Completed! Order marked as Delivered in database.");
+        btn.closest(".delivery-trip-card").style.opacity = "0.5";
+        btn.textContent = "Delivered";
+        btn.disabled = true;
+      } else {
+        alert("Invalid OTP. Please verify with customer before handing over package.");
+      }
+    }
+  </script>
+</body>
+</html>

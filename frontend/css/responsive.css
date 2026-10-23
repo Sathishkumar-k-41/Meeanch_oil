@@ -1,0 +1,407 @@
+/* ==========================================================================
+   Meenachi Grocery - Responsive Breakpoints & Mobile Optimization
+   Mobile First & Device-Specific Adaptations
+   ========================================================================== */
+
+/* Mobile Bottom Navigation Bar */
+.mobile-bottom-nav {
+  display: none;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 64px;
+  background-color: #FFFFFF;
+  border-top: 1px solid var(--border-color);
+  box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.08);
+  z-index: 180;
+  align-items: center;
+  justify-content: space-around;
+  padding: 0 8px;
+}
+
+.mob-nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-secondary);
+  font-size: 0.72rem;
+  font-weight: 600;
+  gap: 3px;
+  position: relative;
+  flex: 1;
+  padding: 6px 0;
+}
+
+.mob-nav-item.active {
+  color: var(--primary);
+}
+
+.mob-nav-icon {
+  font-size: 1.3rem;
+  line-height: 1;
+}
+
+.mob-cart-badge {
+  position: absolute;
+  top: 2px;
+  right: calc(50% - 18px);
+  background: var(--accent);
+  color: #FFFFFF;
+  font-size: 0.65rem;
+  font-weight: 800;
+  min-width: 16px;
+  height: 16px;
+  border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 3px;
+}
+
+/* Mobile Off-canvas Drawer Navigation */
+.mobile-nav-drawer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 290px;
+  height: 100%;
+  background: #FFFFFF;
+  box-shadow: var(--shadow-lg);
+  z-index: 250;
+  transform: translateX(-100%);
+  transition: transform var(--transition-normal);
+  display: flex;
+  flex-direction: column;
+}
+
+.mobile-nav-drawer.active {
+  transform: translateX(0);
+}
+
+.mobile-drawer-header {
+  padding: 20px;
+  background: var(--primary);
+  color: #FFFFFF;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.mobile-drawer-brand {
+  font-family: 'Outfit', sans-serif;
+  font-size: 1.25rem;
+  font-weight: 800;
+}
+
+.mobile-drawer-links {
+  padding: 16px 0;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.mobile-drawer-link {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 20px;
+  font-size: 0.94rem;
+  font-weight: 600;
+  color: var(--text-main);
+  border-bottom: 1px solid var(--border-light);
+}
+
+.mobile-drawer-link:hover, .mobile-drawer-link.active {
+  background: var(--primary-light);
+  color: var(--primary);
+}
+
+.mobile-menu-trigger-btn {
+  display: none;
+  font-size: 1.4rem;
+  color: var(--primary);
+  width: 40px;
+  height: 40px;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-md);
+}
+
+/* ==========================================================================
+   Breakpoints
+   ========================================================================== */
+
+/* Large Tablets and Laptops (max-width: 1024px) */
+@media (max-width: 1024px) {
+  .hero-banner {
+    padding: 40px 32px;
+    gap: 24px;
+  }
+
+  .hero-heading {
+    font-size: 2.6rem;
+  }
+
+  .hero-media-card {
+    max-width: 340px;
+  }
+
+  .hero-media-img {
+    height: 320px;
+  }
+
+  .family-pack-banner {
+    grid-template-columns: 1fr;
+    padding: 32px 24px;
+  }
+
+  .family-pack-banner::before {
+    top: 14px;
+    right: -60px;
+  }
+
+  .footer-top-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 32px;
+  }
+}
+
+/* Tablets & Mobile (max-width: 768px) */
+@media (max-width: 768px) {
+  body {
+    padding-bottom: 64px; /* Space for bottom navigation */
+  }
+
+  .mobile-bottom-nav {
+    display: flex;
+  }
+
+  .mobile-menu-trigger-btn {
+    display: flex;
+  }
+
+  .nav-bar {
+    display: none; /* Replaced by mobile bottom nav & off-canvas drawer */
+  }
+
+  .header-actions .wishlist-action-btn,
+  .header-actions .account-action-btn {
+    display: none; /* Moved to bottom navigation */
+  }
+
+  .location-badge {
+    padding: 6px 10px;
+  }
+
+  .location-label {
+    display: none;
+  }
+
+  .header-main {
+    flex-wrap: wrap;
+    gap: 12px;
+    padding: 10px 0;
+  }
+
+  .brand-logo {
+    order: 1;
+  }
+
+  .header-actions {
+    order: 2;
+  }
+
+  .location-badge {
+    order: 3;
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .search-wrapper {
+    order: 4;
+    max-width: 100%;
+    width: 100%;
+  }
+
+  .hero-banner {
+    grid-template-columns: 1fr;
+    padding: 32px 20px;
+    text-align: center;
+  }
+
+  .hero-tag {
+    margin: 0 auto 14px;
+  }
+
+  .hero-heading {
+    font-size: 2.1rem;
+  }
+
+  .hero-subheading {
+    margin: 0 auto 20px;
+    font-size: 0.94rem;
+  }
+
+  .hero-actions {
+    justify-content: center;
+  }
+
+  .hero-badges-row {
+    justify-content: center;
+    gap: 14px;
+  }
+
+  .hero-media-wrapper {
+    display: none; /* Clean uncluttered mobile view */
+  }
+
+  .section-title {
+    font-size: 1.4rem;
+  }
+
+  .section-subtitle {
+    font-size: 0.85rem;
+  }
+
+  .categories-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+  }
+
+  .category-card {
+    padding: 10px 4px;
+  }
+
+  .category-thumb-wrapper {
+    width: 52px;
+    height: 52px;
+    margin-bottom: 8px;
+  }
+
+  .category-title {
+    font-size: 0.72rem;
+  }
+
+  .category-count {
+    display: none;
+  }
+
+  .products-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+
+  .product-card {
+    padding: 10px;
+  }
+
+  .product-image-container {
+    height: 135px;
+  }
+
+  .product-title {
+    font-size: 0.84rem;
+    min-height: 34px;
+  }
+
+  .product-price-current {
+    font-size: 1.05rem;
+  }
+
+  .add-to-cart-btn {
+    padding: 6px 10px;
+    font-size: 0.75rem;
+  }
+
+  .pack-title {
+    font-size: 1.6rem;
+  }
+
+  .pack-features-grid {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .pack-current-price {
+    font-size: 1.7rem;
+  }
+
+  .newsletter-box {
+    padding: 32px 20px;
+  }
+
+  .newsletter-title {
+    font-size: 1.6rem;
+  }
+
+  .newsletter-form {
+    flex-direction: column;
+    background: transparent;
+    box-shadow: none;
+    padding: 0;
+    gap: 10px;
+  }
+
+  .newsletter-input {
+    background: #FFFFFF;
+    border-radius: var(--radius-full);
+    width: 100%;
+    padding: 12px 18px;
+  }
+
+  .newsletter-btn {
+    width: 100%;
+    padding: 12px;
+  }
+
+  .footer-top-grid {
+    grid-template-columns: 1fr;
+    gap: 28px;
+  }
+
+  .footer-bottom-bar {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .footer-bottom-links {
+    justify-content: center;
+  }
+
+  .toast-container {
+    left: 16px;
+    right: 16px;
+    bottom: 76px; /* Above bottom navigation */
+  }
+
+  .cart-drawer {
+    max-width: 100%;
+  }
+}
+
+/* Small Phones (max-width: 480px) */
+@media (max-width: 480px) {
+  .announcement-bar .container {
+    justify-content: center;
+    text-align: center;
+  }
+
+  .announcement-actions {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .categories-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .brand-name {
+    font-size: 1.22rem;
+  }
+
+  .brand-icon-svg {
+    width: 36px;
+    height: 36px;
+  }
+}

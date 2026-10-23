@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Account | Meenachi Grocery</title>
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/responsive.css">
+
+  <style>
+    .account-card {
+      background: white;
+      border: 1px solid var(--border-color, #ddd);
+      border-radius: 16px;
+      padding: 24px;
+      margin-top: 20px;
+    }
+
+    .account-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .account-field {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .account-field input,
+    .account-field textarea {
+      width: 100%;
+      padding: 11px 12px;
+      border: 1px solid #d7ddd8;
+      border-radius: 8px;
+      font: inherit;
+      box-sizing: border-box;
+    }
+
+    .account-field textarea {
+      min-height: 80px;
+      resize: vertical;
+    }
+
+    .full-width {
+      grid-column: 1 / -1;
+    }
+
+    .address-card {
+      background: var(--bg-warm, #f8f6ee);
+      border-radius: 10px;
+      padding: 16px;
+      margin-top: 12px;
+      line-height: 1.7;
+      overflow-wrap: anywhere;
+    }
+
+    .account-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 16px;
+    }
+
+    .secondary-btn {
+      background: #edf3ee;
+      color: #19583b;
+      border: 1px solid #cbdacf;
+      border-radius: 8px;
+      padding: 10px 14px;
+      cursor: pointer;
+    }
+
+    .danger-btn {
+      background: #b42318;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 10px 16px;
+      cursor: pointer;
+    }
+
+    .account-message {
+      margin-top: 12px;
+      font-size: 14px;
+      overflow-wrap: anywhere;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    @media (max-width: 600px) {
+      .account-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .full-width {
+        grid-column: auto;
+      }
+
+      .account-card {
+        padding: 17px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <header class="site-header">
+    <div class="container">
+      <div class="header-main">
+        <a href="../index.html" class="brand-logo">
+          <div class="brand-text-block">
+            <span class="brand-name">Meenachi Grocery</span>
+            <span class="brand-tagline">My Account</span>
+          </div>
+        </a>
+
+        <a href="../index.html" class="action-btn">🏠 Home</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="container"
+        style="padding:32px 20px;max-width:720px">
+
+    <h1 class="section-title">My Account</h1>
+    <p class="section-subtitle">
+      Manage your personal details and delivery addresses.
+    </p>
+
+    <p id="pageMessage" class="account-message"
+       role="status" aria-live="polite">Loading account...</p>
+
+    <div id="accountContent" class="hidden">
+
+      <!-- PERSONAL DETAILS -->
+      <section class="account-card">
+        <h3 style="color:var(--primary)">Personal Details</h3>
+
+        <form id="profileForm" class="account-grid">
+          <div class="account-field">
+            <label for="customerName">Customer Name</label>
+            <input id="customerName" type="text"
+                   maxlength="100" required>
+          </div>
+
+          <div class="account-field">
+            <label for="customerPhone">Mobile Number</label>
+            <input id="customerPhone" type="tel"
+                   maxlength="20" placeholder="Enter phone number">
+          </div>
+
+          <div class="account-field full-width">
+            <label for="customerEmail">Email Address</label>
+            <input id="customerEmail" type="email" readonly>
+          </div>
+
+          <div class="full-width account-actions">
+            <button class="btn-primary" type="submit">
+              Save Profile
+            </button>
+          </div>
+        </form>
+      </section>
+
+      <!-- SAVED ADDRESSES -->
+      <section class="account-card">
+        <h3 style="color:var(--primary)">Saved Addresses</h3>
+
+        <p style="color:var(--text-secondary)">
+          Add one or more delivery addresses to your account.
+        </p>
+
+        <div id="addressList"></div>
+
+        <div class="account-actions">
+          <button id="showAddressForm" type="button"
+                  class="btn-primary">
+            + Add New Address
+          </button>
+        </div>
+
+        <form id="addressForm" class="account-grid hidden"
+              style="margin-top:20px">
+
+          <div class="account-field">
+            <label for="addressLabel">Address Label</label>
+            <select id="addressLabel" required>
+              <option value="Home">Home</option>
+              <option value="Work">Work</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+
+          <div class="account-field">
+            <label for="addressCity">City</label>
+            <input id="addressCity" maxlength="100" required>
+          </div>
+
+          <div class="account-field full-width">
+            <label for="fullAddress">Full Address</label>
+            <textarea id="fullAddress" maxlength="500"
+                      required></textarea>
+          </div>
+
+          <div class="account-field">
+            <label for="addressPincode">PIN Code</label>
+            <input id="addressPincode" inputmode="numeric"
+                   pattern="[0-9]{6}" maxlength="6" required>
+          </div>
+
+          <div class="account-field">
+            <label for="addressLandmark">Landmark (Optional)</label>
+            <input id="addressLandmark" maxlength="150">
+          </div>
+
+          <div class="full-width">
+            <label>
+              <input type="checkbox" id="defaultAddress">
+              Set as my default address
+            </label>
+          </div>
+
+          <div class="full-width account-actions">
+            <button class="btn-primary" type="submit">
+              Save Address
+            </button>
+
+            <button id="cancelAddressForm"
+                    class="secondary-btn" type="button">
+              Cancel
+            </button>
+          </div>
+        </form>
+      </section>
+
+      <!-- LANGUAGE -->
+      <section class="account-card">
+        <h3 style="color:var(--primary)">Language Preference</h3>
+
+        <div class="account-actions">
+          <button type="button" class="secondary-btn"
+                  onclick="setAccountLang('en')">
+            English
+          </button>
+
+          <button type="button" class="secondary-btn"
+                  onclick="setAccountLang('ta')">
+            தமிழ்
+          </button>
+        </div>
+      </section>
+
+      <!-- ACCOUNT ACTIONS -->
+      <section class="account-card">
+        <h3 style="color:var(--primary)">Account Actions</h3>
+
+        <div class="account-actions">
+          <a href="orders.html" class="btn-primary">
+            View My Orders
+          </a>
+
+          <button id="logoutBtn" class="danger-btn"
+                  type="button">
+            Logout
+          </button>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <script src="../js/translations.js"></script>
+  <script type="module" src="../js/account.js"></script>
+</body>
+</html>

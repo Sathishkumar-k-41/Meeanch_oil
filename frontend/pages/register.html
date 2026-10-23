@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Create Account | Meenachi Grocery</title>
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/responsive.css">
+</head>
+<body style="background: var(--bg-warm); min-height: 100vh; display: flex; flex-direction: column;">
+  <header class="site-header">
+    <div class="container">
+      <div class="header-main" style="justify-content: center;">
+        <a href="../index.html" class="brand-logo">
+          <svg class="brand-icon-svg" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect width="48" height="48" rx="12" fill="#19583B"/>
+            <path d="M13 18C13 16.8954 13.8954 16 15 16H33C34.1046 16 35 16.8954 35 18L36.8 34.2C36.9189 35.2701 36.0754 36.2 35 36.2H13C11.9246 36.2 11.0811 35.2701 11.2 34.2L13 18Z" fill="#FFFFFF"/>
+            <path d="M19 16V13C19 10.2386 21.2386 8 24 8C26.7614 8 29 10.2386 29 13V16" stroke="#E99A38" stroke-width="3" stroke-linecap="round"/>
+            <path d="M24 20C24 13 32 10.5 35 10C34.5 14 31 20 24 20Z" fill="#E99A38"/>
+            <path d="M24 20C24 15 18 13.5 15 13C15.5 16.5 18.5 20 24 20Z" fill="#29B06A"/>
+          </svg>
+          <div class="brand-text-block">
+            <span class="brand-name">Meenachi</span>
+            <span class="brand-tagline">Freshness at Your Doorstep</span>
+          </div>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <main style="flex: 1; display: flex; align-items: center; justify-content: center; padding: 40px 20px;">
+    <div style="background: #FFFFFF; border: 1px solid var(--border-color); border-radius: var(--radius-xl); padding: 36px; max-width: 460px; width: 100%; box-shadow: var(--shadow-md);">
+      <h1 style="font-size: 1.6rem; font-weight: 800; color: var(--primary); margin-bottom: 6px;">Register New Customer</h1>
+      <p style="font-size: 0.88rem; color: var(--text-secondary); margin-bottom: 24px;">Join 50,000+ South Indian households for pure, farm-direct grocery delivery</p>
+
+      <form onsubmit="handleCustomerRegister(event)">
+        <div style="display: flex; flex-direction: column; gap: 6px; margin-bottom: 14px;">
+          <label style="font-size: 0.82rem; font-weight: 700;">Full Name *</label>
+          <input type="text" id="regName" class="form-input" style="padding: 10px 14px; border: 1px solid var(--border-color); border-radius: 8px;" placeholder="e.g. Meenakshi Sundaram" required>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 6px; margin-bottom: 14px;">
+          <label style="font-size: 0.82rem; font-weight: 700;">Mobile Number *</label>
+          <input type="tel" id="regPhone" class="form-input" style="padding: 10px 14px; border: 1px solid var(--border-color); border-radius: 8px;" placeholder="10-digit mobile number" pattern="[6-9][0-9]{9}" required>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 6px; margin-bottom: 14px;">
+          <label style="font-size: 0.82rem; font-weight: 700;">Email Address *</label>
+          <input type="email" id="regEmail" class="form-input" style="padding: 10px 14px; border: 1px solid var(--border-color); border-radius: 8px;" placeholder="name@example.com" required>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 6px; margin-bottom: 20px;">
+          <label style="font-size: 0.82rem; font-weight: 700;">Password * (Minimum 6 characters)</label>
+          <input type="password" id="regPassword" class="form-input" style="padding: 10px 14px; border: 1px solid var(--border-color); border-radius: 8px;" minlength="6" placeholder="Choose a secure password" required>
+        </div>
+
+        <button type="submit" id="regSubmitBtn" class="btn-primary" style="width: 100%; justify-content: center; padding: 12px;">
+          Create My Account ➔
+        </button>
+
+        <div id="regFeedback" style="font-size: 0.82rem; text-align: center; margin-top: 14px;"></div>
+      </form>
+
+      <div style="text-align: center; border-top: 1px solid var(--border-light); padding-top: 20px; margin-top: 24px; font-size: 0.86rem;">
+        Already have an account? <a href="login.html" style="font-weight: 700; color: var(--primary);">Sign In</a>
+      </div>
+    </div>
+  </main>
+
+  <script type="module" src="../js/supabaseClient.js"></script>
+  <script src="../js/dbService.js"></script>
+  <script>
+    async function handleCustomerRegister(e) {
+      e.preventDefault();
+      const name = document.getElementById("regName").value.trim();
+      const phone = document.getElementById("regPhone").value.trim();
+      const email = document.getElementById("regEmail").value.trim();
+      const password = document.getElementById("regPassword").value;
+      const feedback = document.getElementById("regFeedback");
+      const btn = document.getElementById("regSubmitBtn");
+
+      btn.disabled = true;
+      btn.textContent = "Creating Account...";
+      feedback.textContent = "";
+
+      if (window.dbService) {
+        const { data, error } = await window.dbService.signUp(email, password, name, phone);
+        if (error) {
+          feedback.style.color = "#DC3545";
+          feedback.textContent = error.message || "Failed to create account. Please try again.";
+          btn.disabled = false;
+          btn.textContent = "Create My Account ➔";
+          return;
+        }
+      }
+
+      feedback.style.color = "#198754";
+      feedback.textContent = "🎉 Account registered successfully! Check your inbox or proceed to sign in.";
+      setTimeout(() => {
+        window.location.href = "login.html";
+      }, 1500);
+    }
+  </script>
+</body>
+</html>
