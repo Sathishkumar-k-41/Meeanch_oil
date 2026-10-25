@@ -9,7 +9,7 @@ class DBService {
     // If served from Express (port 5000), use relative "/api"; otherwise point to localhost:5000
     this.apiBase = window.location.origin.includes(":5000")
       ? "/api"
-      : "http://localhost:5000/api";
+      : "https://meenachi-grocery-api.onrender.com/api";
     this.client = null;
     this.initClient();
   }
@@ -302,7 +302,7 @@ class DBService {
   async signOut() {
     try {
       await fetch(`${this.apiBase}/auth/logout`, { method: "POST" });
-    } catch (e) {}
+    } catch (e) { }
     const client = this.getClient();
     if (client) await client.auth.signOut();
   }
